@@ -3,7 +3,7 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/Carontedev/AutoPress-Keyboard/releases/download/v0.4.0-beta.2/AutoPress-Keyboard-v0.4.0-beta.2-win-x64.zip"><img src="https://img.shields.io/badge/Download-Windows_x64-8B5CF6?style=for-the-badge" alt="Download AutoPress Keyboard for Windows x64"></a>
+  <a href="https://github.com/Carontedev/AutoPress-Keyboard/releases/download/v1.0.0/AutoPress-Keyboard-v1.0.0-win-x64.zip"><img src="https://img.shields.io/badge/Download-Windows_x64-8B5CF6?style=for-the-badge" alt="Download AutoPress Keyboard for Windows x64"></a>
 </p>
 
 <h1 align="center">AutoPress Keyboard</h1>
@@ -15,7 +15,7 @@
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/Status-Beta-8B5CF6?style=flat-square" alt="Status: Beta">
+  <img src="https://img.shields.io/badge/Version-1.0.0-8B5CF6?style=flat-square" alt="Version: 1.0.0">
   <img src="https://img.shields.io/badge/Platform-Windows_x64-0078D4?style=flat-square" alt="Platform: Windows x64">
   <img src="https://img.shields.io/badge/.NET-10-512BD4?style=flat-square" alt=".NET 10">
   <img src="https://img.shields.io/badge/UI-WPF-0D7490?style=flat-square" alt="Interface: WPF">
@@ -73,9 +73,9 @@ The build runs unit tests and produces `artifacts/AutoPress-win-x64/AutoPress.ex
 
 ## Compatibility & Status
 
-This is an **unsigned beta**. Applications may reject synthetic input, and game compatibility is not guaranteed. AutoPress does not bypass anti-cheat or provide protection against bans. Use it only where automation is permitted.
+This release is **not digitally signed**. Applications may reject synthetic input, and game compatibility is not guaranteed. AutoPress does not bypass anti-cheat or provide protection against bans. Use it only where automation is permitted.
 
-Windows may show an unrecognized-app warning because this beta is not digitally signed. Do not disable Windows or antivirus protections.
+Windows may show an unrecognized-app warning. Do not disable Windows or antivirus protections.
 
 ## License
 

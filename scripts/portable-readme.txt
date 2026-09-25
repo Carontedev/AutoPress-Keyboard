@@ -1,4 +1,4 @@
-AUTOPRESS KEYBOARD - WINDOWS x64
+AUTOPRESS KEYBOARD 1.0.0 - WINDOWS x64
 https://github.com/Carontedev/AutoPress-Keyboard
 
 1. Extract the ZIP and open AutoPress.exe.
@@ -16,7 +16,7 @@ Close or choose Exit to stop and exit.
 If Release key appears, focus a non-elevated window and retry.
 
 No installer, account, or separate .NET installation is needed.
-This is an unsigned beta. Do not disable Windows or antivirus protections.
+This release is not digitally signed. Do not disable Windows or antivirus protections.
 Game compatibility and protection against bans are not guaranteed.
 Use automation only where permitted.
 
