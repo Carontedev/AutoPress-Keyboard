@@ -8,10 +8,12 @@
     <AssemblyName>AutoPress</AssemblyName>
     <Version>0.4.0-beta.1</Version>
     <ApplicationManifest>app.manifest</ApplicationManifest>
+    <ApplicationIcon>Assets/autopress.ico</ApplicationIcon>
     <Product>AutoPress Keyboard</Product>
     <Description>Keyboard automation with global shortcut control</Description>
   </PropertyGroup>
   <ItemGroup>
+    <Resource Include="Assets/autopress.ico" />
     <ProjectReference Include="../AutoPress.Core/AutoPress.Core.csproj" />
     <ProjectReference Include="../AutoPress.Windows/AutoPress.Windows.csproj" />
   </ItemGroup>

@@ -21,6 +21,7 @@ public partial class MainWindow : Window
     private AutomationSession? session;
     private SessionRequest? currentRequest;
     private Forms.NotifyIcon? tray;
+    private System.Drawing.Icon? trayIcon;
     private Hotkey preferredHotkey;
     private bool restoringHotkey;
     private bool initialized, closing, allowClose, toggling;
@@ -32,6 +33,10 @@ public partial class MainWindow : Window
         (loaded, loadWarning) = SettingsStore.Load();
         preferredHotkey = loaded.Hotkey;
         InitializeComponent();
+        // Retain the ICO decoder so WPF selects the correct frame for each native icon size.
+        // BitmapImage selects only the first (16px) frame and pads it inside the taskbar icon.
+        Icon = System.Windows.Media.Imaging.BitmapFrame.Create(
+            new Uri("pack://application:,,,/AutoPress;component/Assets/autopress.ico"));
 
         repeatKey = SessionRequest.IsSupportedKey(loaded.Key) ? loaded.Key : 0x46;
         KeyPicker.Content = KeyLabel(repeatKey);
@@ -156,7 +161,10 @@ public partial class MainWindow : Window
         ApplyTheme();
         hotkeys = new GlobalHotkeys(handle);
         TryApplyHotkey();
-        tray = new Forms.NotifyIcon { Icon = System.Drawing.SystemIcons.Application, Text = "AutoPress · Idle", Visible = true };
+        using (var iconStream = Application.GetResourceStream(new Uri("pack://application:,,,/AutoPress;component/Assets/autopress.ico")).Stream)
+        using (var resourceIcon = new System.Drawing.Icon(iconStream, Forms.SystemInformation.SmallIconSize))
+            trayIcon = (System.Drawing.Icon)resourceIcon.Clone();
+        tray = new Forms.NotifyIcon { Icon = trayIcon, Text = "AutoPress Keyboard · Idle", Visible = true };
         var menu = new Forms.ContextMenuStrip();
         menu.Items.Add("Open AutoPress", null, (_, _) => Dispatcher.Invoke(ShowWindow));
         menu.Items.Add("Stop", null, (_, _) => Dispatcher.InvokeAsync(() => StopAsync("Stopped from the system tray")));
@@ -503,6 +511,7 @@ public partial class MainWindow : Window
         uiTimer.Stop();
         tray?.ContextMenuStrip?.Dispose();
         tray?.Dispose();
+        trayIcon?.Dispose();
         SystemEvents.PowerModeChanged -= OnPowerModeChanged;
         SystemEvents.SessionSwitch -= OnSessionSwitch;
         SystemEvents.UserPreferenceChanged -= OnPreferenceChanged;

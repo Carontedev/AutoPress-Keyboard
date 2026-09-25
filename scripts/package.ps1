@@ -18,9 +18,11 @@ try {
         if ((Get-Item -LiteralPath $executable).VersionInfo.ProductVersion -match 'beta|alpha|preview|rc') { throw 'Stable release blocked: executable is a prerelease.' }
     }
     Copy-Item -LiteralPath README.md -Destination (Join-Path $release 'README.md')
+    New-Item -ItemType Directory -Path (Join-Path $release 'docs/assets') -Force | Out-Null
+    Copy-Item -LiteralPath docs/assets/logo.png -Destination (Join-Path $release 'docs/assets/logo.png')
     New-Item -ItemType Directory -Path (Join-Path $release 'docs/research') -Force | Out-Null
     Copy-Item -LiteralPath docs/research/autopress-key-research.md -Destination (Join-Path $release 'docs/research/autopress-key-research.md')
-    foreach ($document in @('VALIDATION.md','RELEASE_CHECKLIST.md')) {
+    foreach ($document in @('VALIDATION.md','RELEASE_CHECKLIST.md','USER_GUIDE.md')) {
         $source = Join-Path 'docs' $document
         if (Test-Path -LiteralPath $source) { Copy-Item -LiteralPath $source -Destination (Join-Path $release ('docs/' + $document)) }
     }

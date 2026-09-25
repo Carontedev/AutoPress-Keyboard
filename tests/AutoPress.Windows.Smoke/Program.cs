@@ -198,6 +198,32 @@ internal static class Program
 
     private static async Task CheckAsync(MainWindow main)
     {
+        if (main.Icon is null || main.Icon.Width <= 0)
+            throw new Exception("The branded window icon did not load.");
+        var trayIcon = (System.Drawing.Icon?)typeof(MainWindow).GetField("trayIcon",
+            System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)!.GetValue(main);
+        if (trayIcon is null || trayIcon.Handle == IntPtr.Zero)
+            throw new Exception("The branded tray icon did not load.");
+        Console.WriteLine("PASS: branded window and tray icons.");
+        // Inspect the actual native large icon supplied to the taskbar, not only WPF's source.
+        nint largeIconHandle = SendMessage(new WindowInteropHelper(main).Handle, 0x007F, 1, 0);
+        if (largeIconHandle == 0) throw new Exception("The native taskbar icon is missing.");
+        using (var nativeIcon = System.Drawing.Icon.FromHandle(largeIconHandle))
+        using (var pixels = nativeIcon.ToBitmap())
+        {
+            int left = pixels.Width, right = -1;
+            for (int pixelY = 0; pixelY < pixels.Height; pixelY++)
+                for (int pixelX = 0; pixelX < pixels.Width; pixelX++)
+                    if (pixels.GetPixel(pixelX, pixelY).A > 32)
+                    {
+                        left = Math.Min(left, pixelX);
+                        right = Math.Max(right, pixelX);
+                    }
+            int visibleWidth = right - left + 1;
+            if (visibleWidth < pixels.Width * 0.8)
+                throw new Exception($"Taskbar artwork is undersized: {visibleWidth}px inside {pixels.Width}px.");
+            Console.WriteLine($"PASS: native taskbar artwork occupies {visibleWidth}/{pixels.Width}px.");
+        }
         var priorSettings = SettingsStore.Load().Settings;
         SettingsStore.Save(priorSettings with { Hotkey = new Hotkey(0x76, 0) });
         var unregisteredWindow = new MainWindow(); // No Show: no native hotkeys registered.
