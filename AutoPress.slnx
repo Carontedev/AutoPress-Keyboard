@@ -1,0 +1,12 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/AutoPress.Core/AutoPress.Core.csproj" />
+    <Project Path="src/AutoPress.Windows/AutoPress.Windows.csproj" />
+    <Project Path="src/AutoPress.App/AutoPress.App.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/AutoPress.Core.Tests/AutoPress.Core.Tests.csproj" />
+    <Project Path="tests/AutoPress.Windows.Tests/AutoPress.Windows.Tests.csproj" />
+    <Project Path="tests/AutoPress.Windows.Smoke/AutoPress.Windows.Smoke.csproj" />
+  </Folder>
+</Solution>

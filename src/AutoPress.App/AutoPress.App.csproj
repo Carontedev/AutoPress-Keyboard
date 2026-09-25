@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <UseWindowsForms>true</UseWindowsForms>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <AssemblyName>AutoPress</AssemblyName>
+    <Version>0.4.0-beta.1</Version>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <Product>AutoPress Keyboard</Product>
+    <Description>Keyboard automation with global shortcut control</Description>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="../AutoPress.Core/AutoPress.Core.csproj" />
+    <ProjectReference Include="../AutoPress.Windows/AutoPress.Windows.csproj" />
+  </ItemGroup>
+</Project>

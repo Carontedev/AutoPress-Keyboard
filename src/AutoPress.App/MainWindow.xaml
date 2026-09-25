@@ -1,0 +1,82 @@
+<Window x:Class="AutoPress.App.MainWindow" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Style="{StaticResource {x:Type Window}}" Title="AutoPress Keyboard" SizeToContent="WidthAndHeight" ResizeMode="CanMinimize" WindowStyle="SingleBorderWindow" Background="Transparent" WindowStartupLocation="CenterScreen">
+  <Window.Resources>
+    <Style x:Key="LimitSwitch" TargetType="CheckBox">
+      <Setter Property="Foreground" Value="{DynamicResource TextBrush}" />
+      <Setter Property="FontSize" Value="11" />
+      <Setter Property="Cursor" Value="Hand" />
+      <Setter Property="Template">
+        <Setter.Value>
+          <ControlTemplate TargetType="CheckBox">
+            <Border x:Name="FocusRing" BorderBrush="Transparent" BorderThickness="1" CornerRadius="7" Padding="6,4" Background="Transparent">
+              <StackPanel Orientation="Horizontal">
+                <ContentPresenter VerticalAlignment="Center" Margin="0,0,9,0" RecognizesAccessKey="True" />
+                <Border x:Name="Track" Width="34" Height="20" CornerRadius="10" Background="{DynamicResource MutedBrush}">
+                  <Ellipse x:Name="Thumb" Width="14" Height="14" Fill="White" HorizontalAlignment="Left" Margin="3" />
+                </Border>
+              </StackPanel>
+            </Border>
+            <ControlTemplate.Triggers>
+              <Trigger Property="IsChecked" Value="True">
+                <Setter TargetName="Track" Property="Background" Value="{DynamicResource AccentBrush}" />
+                <Setter TargetName="Thumb" Property="HorizontalAlignment" Value="Right" />
+              </Trigger>
+              <Trigger Property="IsKeyboardFocused" Value="True"><Setter TargetName="FocusRing" Property="BorderBrush" Value="{DynamicResource AccentBrush}" /></Trigger>
+              <Trigger Property="IsMouseOver" Value="True"><Setter TargetName="FocusRing" Property="Background" Value="{DynamicResource InputBrush}" /></Trigger>
+              <Trigger Property="IsEnabled" Value="False"><Setter TargetName="FocusRing" Property="Opacity" Value="0.5" /></Trigger>
+            </ControlTemplate.Triggers>
+          </ControlTemplate>
+        </Setter.Value>
+      </Setter>
+    </Style>
+    <Style x:Key="QuietButton" TargetType="Button" BasedOn="{StaticResource {x:Type Button}}"><Setter Property="Background" Value="Transparent" /><Setter Property="BorderThickness" Value="0" /><Setter Property="Padding" Value="8,5" /><Setter Property="FontSize" Value="11" /><Setter Property="Foreground" Value="{DynamicResource MutedBrush}" /></Style>
+  </Window.Resources>
+  <ScrollViewer x:Name="ContentScroll" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" CanContentScroll="False">
+  <Border x:Name="GlassPanel" Width="560" CornerRadius="0" Background="{DynamicResource GlassBrush}" BorderBrush="{DynamicResource GlassEdgeBrush}" BorderThickness="1" Padding="22,14,22,16">
+    <StackPanel>
+      <Grid x:Name="StatusBar" Height="26" Background="Transparent">
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
+          <Border x:Name="StateBadge" Background="{DynamicResource InputBrush}" CornerRadius="10" Padding="8,4" Margin="0,0,7,0"><TextBlock x:Name="StateText" Text="●  Idle" FontSize="10" Foreground="{DynamicResource MutedBrush}" AutomationProperties.LiveSetting="Polite" /></Border>
+          <Button x:Name="SettingsButton" Style="{StaticResource QuietButton}" Click="ToggleAdvanced" ToolTip="Settings" AutomationProperties.Name="Show settings" AutomationProperties.AutomationId="SettingsButton"><TextBlock Text="&#xE713;" FontFamily="Segoe Fluent Icons, Segoe MDL2 Assets" FontSize="14" /></Button>
+        </StackPanel>
+      </Grid>
+      <StackPanel x:Name="Configuration" Margin="0,18,0,0">
+        <Grid>
+          <Grid.ColumnDefinitions><ColumnDefinition /><ColumnDefinition Width="12" /><ColumnDefinition /><ColumnDefinition Width="12" /><ColumnDefinition /></Grid.ColumnDefinitions>
+          <StackPanel><TextBlock Text="Key" Style="{StaticResource Label}" /><Button x:Name="KeyPicker" Content="F" Height="36" Padding="12,6" HorizontalContentAlignment="Left" Click="CaptureKey" PreviewKeyDown="CaptureKeyDown" PreviewKeyUp="CaptureKeyUp" LostKeyboardFocus="CaptureFocusLost" ToolTip="Click, then press a key. Esc cancels." AutomationProperties.Name="Repeat key" AutomationProperties.HelpText="Click to record a key. Press Escape to cancel." AutomationProperties.AutomationId="KeyPicker" /></StackPanel>
+          <StackPanel Grid.Column="2"><TextBlock Text="Interval (ms)" Style="{StaticResource Label}" /><TextBox x:Name="IntervalInput" Text="100" TextChanged="ConfigChanged" AutomationProperties.Name="Interval in milliseconds" AutomationProperties.AutomationId="IntervalInput" /></StackPanel>
+          <StackPanel Grid.Column="4"><TextBlock Text="Toggle shortcut" Style="{StaticResource Label}" /><Button x:Name="HotkeySummaryButton" Content="F8" Height="36" Padding="10,6" Click="ToggleAdvanced" ToolTip="Change toggle shortcut" FontSize="13" FontFamily="Cascadia Mono, Consolas" /></StackPanel>
+        </Grid>
+        <Button x:Name="TargetSummaryButton" Style="{StaticResource QuietButton}" HorizontalAlignment="Left" MaxWidth="510" Padding="0,0" Margin="0,10,0,0" Click="ToggleAdvanced" ToolTip="Change startup target and session limit"><TextBlock x:Name="TargetSummaryText" Text="Any active window · Limit: 300 s" TextTrimming="CharacterEllipsis" MaxWidth="505" FontSize="11" /></Button>
+        <Border x:Name="AdvancedPanel" Visibility="Collapsed" Background="{DynamicResource SurfaceBrush}" BorderBrush="{DynamicResource BorderBrush}" BorderThickness="1" CornerRadius="13" Padding="14" Margin="0,14,0,0">
+          <StackPanel>
+            <Grid Margin="0,0,0,3">
+              <TextBlock Text="Session limit" FontSize="12" FontWeight="SemiBold" VerticalAlignment="Center" />
+              <CheckBox x:Name="UnlimitedCheckBox" Content="No limit" Style="{StaticResource LimitSwitch}" HorizontalAlignment="Right" Checked="UnlimitedChanged" Unchecked="UnlimitedChanged" ToolTip="Keep running until stopped. No duration or keystroke limit." AutomationProperties.Name="No session limit" />
+            </Grid>
+            <TextBlock x:Name="LimitHint" Style="{StaticResource Caption}" FontSize="10" TextWrapping="Wrap" Margin="0,0,0,12" />
+            <Grid x:Name="LimitControls"><Grid.ColumnDefinitions><ColumnDefinition /><ColumnDefinition Width="12" /><ColumnDefinition /></Grid.ColumnDefinitions>
+              <StackPanel><TextBlock Text="Limit type" Style="{StaticResource Label}" /><ComboBox x:Name="LimitPicker" SelectionChanged="ConfigChanged" AutomationProperties.Name="Limit type"><ComboBoxItem Content="Duration" /><ComboBoxItem Content="Keystrokes" /></ComboBox></StackPanel>
+              <StackPanel Grid.Column="2"><TextBlock x:Name="LimitLabel" Text="Duration (seconds)" Style="{StaticResource Label}" /><TextBox x:Name="LimitInput" Text="300" TextChanged="ConfigChanged" AutomationProperties.Name="Limit value" /></StackPanel>
+            </Grid>
+            <TextBlock Text="Global shortcut" Style="{StaticResource Label}" Margin="0,12,0,5" />
+            <Grid><Grid.ColumnDefinitions><ColumnDefinition /><ColumnDefinition Width="10" /><ColumnDefinition Width="80" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
+              <ComboBox x:Name="ModifiersPicker" SelectionChanged="HotkeyChanged" AutomationProperties.Name="Shortcut modifiers" /><ComboBox x:Name="HotkeyPicker" Grid.Column="2" SelectionChanged="HotkeyChanged" AutomationProperties.Name="Hotkey" /><Button x:Name="ApplyHotkeyButton" Grid.Column="3" Content="Apply" Margin="10,0,0,0" Padding="12,6" Click="ApplyHotkey" AutomationProperties.AutomationId="ApplyHotkey" />
+            </Grid>
+            <TextBlock Text="Startup target" Style="{StaticResource Label}" Margin="0,12,0,5" />
+            <Grid><Grid.ColumnDefinitions><ColumnDefinition /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions><ComboBox x:Name="TargetPicker" DisplayMemberPath="Name" SelectionChanged="ConfigChanged" AutomationProperties.Name="Startup target" /><Button Grid.Column="1" Content="↻" FontSize="17" Padding="12,4" Margin="10,0,0,0" Click="RefreshTargets" ToolTip="Refresh applications" AutomationProperties.Name="Refresh applications" /></Grid>
+            <TextBlock Text="Choose Any active window to start anywhere. A selected application is checked only at startup; input then follows the active window." Style="{StaticResource Caption}" TextWrapping="Wrap" FontSize="10" Margin="0,8,0,0" />
+            <Button x:Name="ThemeButton" Content="Theme: System" HorizontalAlignment="Right" Margin="0,12,0,0" Style="{StaticResource QuietButton}" Click="ChangeTheme" AutomationProperties.Name="Change theme" />
+          </StackPanel>
+        </Border>
+      </StackPanel>
+      <Grid Margin="0,18,0,0"><Grid.ColumnDefinitions><ColumnDefinition Width="238" /><ColumnDefinition /></Grid.ColumnDefinitions>
+        <Button x:Name="ToggleButton" Content="Start · F8" Height="40" Background="{DynamicResource AccentBrush}" Foreground="White" BorderThickness="0" FontWeight="SemiBold" FontSize="13" Padding="16,8" Click="ToggleClick" AutomationProperties.AutomationId="ToggleButton" />
+        <StackPanel Grid.Column="1" HorizontalAlignment="Right" VerticalAlignment="Center"><StackPanel Orientation="Horizontal" HorizontalAlignment="Right"><TextBlock x:Name="CountText" Text="0" FontWeight="SemiBold" FontSize="16" /><TextBlock Text=" keystrokes" Style="{StaticResource Caption}" FontSize="11" VerticalAlignment="Bottom" Margin="0,0,0,2" /></StackPanel><TextBlock x:Name="ElapsedText" Text="00:00" Style="{StaticResource Caption}" FontSize="10" FontFamily="Cascadia Mono, Consolas" HorizontalAlignment="Right" Margin="0,2,0,0" /></StackPanel>
+      </Grid>
+      <ProgressBar x:Name="SessionProgress" Height="2" Margin="0,12,0,0" Maximum="100" Background="{DynamicResource BorderBrush}" Foreground="{DynamicResource AccentBrush}" BorderThickness="0" />
+      <TextBlock x:Name="FeedbackText" Text="Ready" Style="{StaticResource Caption}" FontSize="11" TextWrapping="Wrap" MaxWidth="510" Margin="0,9,0,0" AutomationProperties.LiveSetting="Polite" />
+      <Grid Margin="0,10,0,0"><TextBlock Text="Emergency stop · Ctrl + Alt + F10" Style="{StaticResource Caption}" FontSize="10" VerticalAlignment="Center" /><Button HorizontalAlignment="Right" Content="About &amp; preferences" Style="{StaticResource QuietButton}" Padding="0,2" FontSize="10" Click="ShowAbout" /></Grid>
+    </StackPanel>
+  </Border>
+  </ScrollViewer>
+</Window>
