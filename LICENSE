@@ -1,0 +1,55 @@
+AUTOPRESS KEYBOARD PROPRIETARY LICENSE
+Copyright (c) 2026 Carontedev. All rights reserved.
+
+1. Ownership
+AutoPress Keyboard, including its original source code, binaries, artwork,
+name and documentation (the "Software"), remains the property of its
+respective copyright holders. This is a proprietary license, not an
+open-source license. Public availability does not transfer ownership.
+
+2. Limited permission
+Subject to these terms, Carontedev grants you a non-exclusive,
+non-transferable permission to download and run official copies of the
+Software for your own personal, non-commercial use. You may make a private
+backup and inspect, compile or modify the source solely for that same use.
+This permission does not authorize use that violates applicable law or
+the rules of a third-party application or service.
+
+3. Restrictions
+Without prior written permission from Carontedev, you may not:
+- Sell, resell, rent, sublicense or commercially exploit the Software.
+- Redistribute, rehost, publish or bundle the Software, its source code,
+  artwork or modified versions, whether free of charge or for payment.
+- Offer the Software as a paid service or include it in a commercial product.
+- Remove or alter copyright, license, attribution or ownership notices.
+- Present the Software as your own product or imply official endorsement.
+
+You may share links to the official repository and release pages.
+For a public GitHub repository, viewing and forking through GitHub remain
+permitted to the extent required by GitHub's applicable Terms of Service;
+that permission does not grant resale or other commercial rights.
+Nothing here limits rights that applicable law makes non-waivable.
+
+4. Third-party components
+Third-party components, including Microsoft .NET, are governed by their
+own licenses and notices. These restrictions do not replace or restrict
+rights granted under those licenses. See the bundled third-party notices.
+
+5. No warranty; limitation of liability
+TO THE MAXIMUM EXTENT PERMITTED BY LAW, THE SOFTWARE IS PROVIDED "AS IS",
+WITHOUT WARRANTIES OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING WARRANTIES
+OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+THE COPYRIGHT HOLDERS SHALL NOT BE LIABLE FOR CLAIMS, DAMAGES OR OTHER
+LIABILITY ARISING FROM THE SOFTWARE OR ITS USE.
+No compatibility, uninterrupted operation or protection against account
+restrictions or bans is promised.
+
+6. Termination and permissions
+If you breach these terms, the permissions granted by this license end.
+You must cease unauthorized use and distribution and delete copies except
+where retention is required by law.
+Additional permissions must be obtained in writing from Carontedev:
+https://github.com/Carontedev
+
+These terms apply to copies distributed with this license. They do not
+retroactively revoke rights previously granted under another license.

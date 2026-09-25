@@ -14,24 +14,26 @@ try {
     try { & (Join-Path $PSScriptRoot 'package.ps1') -ReleaseDirectory $release -DestinationPath $zip | Out-Null }
     catch { $failed = $true }
 } finally { $lock.Dispose() }
-if (!$failed -or (Get-FileHash -LiteralPath $zip).Hash -ne $before) { throw 'Failed packaging did not preserve the previous ZIP.' }
+if (!$failed -or (Get-FileHash -LiteralPath $zip).Hash -ne $before) { throw 'Failed packaging did not preserve previous ZIP.' }
 $blocked = $false
 try { & (Join-Path $PSScriptRoot 'package.ps1') -ReleaseDirectory $release -DestinationPath $zip -Stable | Out-Null }
 catch { $blocked = $true }
-if (!$blocked -or (Get-FileHash -LiteralPath $zip).Hash -ne $before) { throw 'Stable gate did not preserve the previous package.' }
-if (!(Get-Content -LiteralPath ($zip + '.sha256')).StartsWith($before)) { throw 'Checksum does not match the preserved package.' }
+if (!$blocked -or (Get-FileHash -LiteralPath $zip).Hash -ne $before) { throw 'Stable gate did not preserve previous ZIP.' }
+if (!(Get-Content -LiteralPath ($zip + '.sha256')).StartsWith($before)) { throw 'Checksum does not match preserved ZIP.' }
 & (Join-Path $PSScriptRoot 'package.ps1') -ReleaseDirectory $release -DestinationPath $zip | Out-Null
-if (!(Get-Content -LiteralPath ($zip + '.sha256')).StartsWith((Get-FileHash -LiteralPath $zip).Hash)) { throw 'Replacement package checksum mismatch.' }
-& (Join-Path $PSScriptRoot 'package.ps1') -ReleaseDirectory $release -DestinationPath $zip -Minimal | Out-Null
+if (!(Get-Content -LiteralPath ($zip + '.sha256')).StartsWith((Get-FileHash -LiteralPath $zip).Hash)) { throw 'Replacement checksum mismatch.' }
 $archive = [IO.Compression.ZipFile]::OpenRead($zip)
 try {
-    if ($archive.Entries.Count -ne 2 -or !$archive.GetEntry('AutoPress.exe') -or !$archive.GetEntry('README.txt')) {
-        throw 'Minimal archive must contain exactly AutoPress.exe and README.txt.'
+    if ($archive.Entries.Count -ne 3 -or !$archive.GetEntry('AutoPress.exe') -or !$archive.GetEntry('README.txt') -or !$archive.GetEntry('LICENSE.txt')) {
+        throw 'Unexpected release contents.'
+    }
+    $reader = [IO.StreamReader]::new($archive.GetEntry('LICENSE.txt').Open())
+    try { $license = $reader.ReadToEnd() } finally { $reader.Dispose() }
+    if (!$license.Contains('AUTOPRESS KEYBOARD PROPRIETARY LICENSE') -or !$license.Contains('Sell, resell') -or !$license.Contains('Permission is hereby granted')) {
+        throw 'Product terms or bundled runtime notices are missing.'
     }
     $reader = [IO.StreamReader]::new($archive.GetEntry('README.txt').Open())
     try { $readme = $reader.ReadToEnd() } finally { $reader.Dispose() }
-    if (!$readme.Contains('THIRD-PARTY NOTICES') -or !$readme.Contains('Permission is hereby granted')) {
-        throw 'Minimal README must retain bundled component notices.'
-    }
+    if ($readme.Length -gt 2500 -or !$readme.Contains('Ctrl + Alt + F10')) { throw 'README must be short and retain emergency instructions.' }
 } finally { $archive.Dispose() }
-Write-Output 'PASS: verified full/minimal archives, bundled notices, failure preservation, and stable release gate.'
+Write-Output 'PASS: three-file archive, product/runtime licenses, concise README, failure preservation, stable gate.'

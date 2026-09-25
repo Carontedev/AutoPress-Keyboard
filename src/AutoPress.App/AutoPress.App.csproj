@@ -6,7 +6,8 @@
     <UseWindowsForms>true</UseWindowsForms>
     <ImplicitUsings>disable</ImplicitUsings>
     <AssemblyName>AutoPress</AssemblyName>
-    <Version>0.4.0-beta.1</Version>
+    <Version>0.4.0-beta.2</Version>
+    <Copyright>Copyright (c) 2026 Carontedev. All rights reserved.</Copyright>
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <ApplicationIcon>Assets/autopress.ico</ApplicationIcon>
     <Product>AutoPress Keyboard</Product>
