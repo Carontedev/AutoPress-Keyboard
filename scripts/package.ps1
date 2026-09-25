@@ -1,7 +1,8 @@
 param(
     [string]$ReleaseDirectory = 'artifacts/AutoPress-win-x64',
     [string]$DestinationPath = 'artifacts/AutoPress-win-x64.zip',
-    [switch]$Stable
+    [switch]$Stable,
+    [switch]$Minimal
 )
 $ErrorActionPreference = 'Stop'
 Push-Location (Join-Path $PSScriptRoot '..')
@@ -17,6 +18,16 @@ try {
         if ((Get-AuthenticodeSignature -LiteralPath $executable).Status -ne 'Valid') { throw 'Stable release blocked: a valid code-signing signature is required.' }
         if ((Get-Item -LiteralPath $executable).VersionInfo.ProductVersion -match 'beta|alpha|preview|rc') { throw 'Stable release blocked: executable is a prerelease.' }
     }
+    if ($Minimal) {
+        $readme = Join-Path $release 'README.txt'
+        $text = [IO.File]::ReadAllText((Join-Path (Get-Location) 'docs/PORTABLE_README.txt'))
+        foreach ($notice in @('dotnet-LICENSE.txt', 'dotnet-THIRD-PARTY-NOTICES.txt', 'windowsdesktop-LICENSE.txt')) {
+            $text += [Environment]::NewLine + [Environment]::NewLine + $notice + [Environment]::NewLine
+            $text += [IO.File]::ReadAllText((Join-Path (Get-Location) ('docs/legal/' + $notice)))
+        }
+        [IO.File]::WriteAllText($readme, $text, [Text.UTF8Encoding]::new($false))
+        $items = @($executable, $readme)
+    } else {
     Copy-Item -LiteralPath README.md -Destination (Join-Path $release 'README.md')
     New-Item -ItemType Directory -Path (Join-Path $release 'docs/assets') -Force | Out-Null
     Copy-Item -LiteralPath docs/assets/logo.png -Destination (Join-Path $release 'docs/assets/logo.png')
@@ -34,6 +45,7 @@ try {
             $items += $copy
         }
     }
+    }
     $parent = Split-Path -Parent $destination
     New-Item -ItemType Directory -Path $parent -Force | Out-Null
     $candidate = Join-Path $parent ('.package-' + [Guid]::NewGuid().ToString('N') + '.zip')
@@ -42,7 +54,9 @@ try {
     $archive = [IO.Compression.ZipFile]::OpenRead($candidate)
     try {
         $entry = $archive.GetEntry('AutoPress.exe')
-        if ($null -eq $entry -or $null -eq $archive.GetEntry('README.md')) { throw 'Archive verification failed: required files missing.' }
+        $readmeName = if ($Minimal) { 'README.txt' } else { 'README.md' }
+        if ($null -eq $entry -or $null -eq $archive.GetEntry($readmeName)) { throw 'Archive verification failed: required files missing.' }
+        if ($Minimal -and $archive.Entries.Count -ne 2) { throw 'Minimal package must contain exactly the executable and README.txt.' }
         $stream = $entry.Open()
         $sha = [Security.Cryptography.SHA256]::Create()
         try { $packedHash = [BitConverter]::ToString($sha.ComputeHash($stream)).Replace('-', '') }

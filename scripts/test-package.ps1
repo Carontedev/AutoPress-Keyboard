@@ -22,4 +22,16 @@ if (!$blocked -or (Get-FileHash -LiteralPath $zip).Hash -ne $before) { throw 'St
 if (!(Get-Content -LiteralPath ($zip + '.sha256')).StartsWith($before)) { throw 'Checksum does not match the preserved package.' }
 & (Join-Path $PSScriptRoot 'package.ps1') -ReleaseDirectory $release -DestinationPath $zip | Out-Null
 if (!(Get-Content -LiteralPath ($zip + '.sha256')).StartsWith((Get-FileHash -LiteralPath $zip).Hash)) { throw 'Replacement package checksum mismatch.' }
-Write-Output 'PASS: verified archive, failure preserves previous ZIP/checksum, and unsigned stable release is blocked.'
+& (Join-Path $PSScriptRoot 'package.ps1') -ReleaseDirectory $release -DestinationPath $zip -Minimal | Out-Null
+$archive = [IO.Compression.ZipFile]::OpenRead($zip)
+try {
+    if ($archive.Entries.Count -ne 2 -or !$archive.GetEntry('AutoPress.exe') -or !$archive.GetEntry('README.txt')) {
+        throw 'Minimal archive must contain exactly AutoPress.exe and README.txt.'
+    }
+    $reader = [IO.StreamReader]::new($archive.GetEntry('README.txt').Open())
+    try { $readme = $reader.ReadToEnd() } finally { $reader.Dispose() }
+    if (!$readme.Contains('THIRD-PARTY NOTICES') -or !$readme.Contains('Permission is hereby granted')) {
+        throw 'Minimal README must retain bundled component notices.'
+    }
+} finally { $archive.Dispose() }
+Write-Output 'PASS: verified full/minimal archives, bundled notices, failure preservation, and stable release gate.'

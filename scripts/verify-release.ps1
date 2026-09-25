@@ -1,7 +1,7 @@
-param([switch]$Trace)
+param([switch]$Trace, [string]$ExecutablePath = 'artifacts/AutoPress-win-x64/AutoPress.exe')
 $ErrorActionPreference = 'Stop'
 $workspace = Split-Path -Parent $PSScriptRoot
-$executable = Join-Path $workspace 'artifacts\AutoPress-win-x64\AutoPress.exe'
+$executable = Join-Path $workspace $ExecutablePath
 $previousSettings = $env:AUTOPRESS_SETTINGS_DIRECTORY
 $env:AUTOPRESS_SETTINGS_DIRECTORY = Join-Path $workspace 'artifacts\qa\release-settings'
 $process = $null
