@@ -44,7 +44,7 @@
 
 ## Getting Started
 
-1. [Download the Windows ZIP](https://github.com/Carontedev/AutoPress-Keyboard/releases/download/v0.4.0-beta.2/AutoPress-Keyboard-v0.4.0-beta.2-win-x64.zip).
+1. Open [Releases](https://github.com/Carontedev/AutoPress-Keyboard/releases) and download the Windows ZIP from the latest release's **Assets**.
 2. Right-click the ZIP and choose **Extract All**.
 3. Open **AutoPress.exe**.
 
